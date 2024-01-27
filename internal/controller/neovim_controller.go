@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 
+	instancev1alpha1 "github.com/prot0s34/neovim-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -10,9 +11,8 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	instancev1alpha1 "github.com/prot0s34/neovim-operator/api/v1alpha1"
 )
 
 // NeovimReconciler reconciles a Neovim object
@@ -44,13 +44,19 @@ func (r *NeovimReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 	pod := &corev1.Pod{}
 	err = r.Get(ctx, types.NamespacedName{Name: neovim.Name, Namespace: neovim.Namespace}, pod)
 	if err != nil && errors.IsNotFound(err) {
-		newPod := constructPodForNeovim(neovim)
+		newPod, err := constructPodForNeovim(neovim, r.Scheme)
+		if err != nil {
+			log.Error(err, "Failed to set controller reference on new Pod")
+			return ctrl.Result{}, err
+		}
+
 		log.Info("Creating a new Pod", "Pod.Namespace", newPod.Namespace, "Pod.Name", newPod.Name)
 		err = r.Create(ctx, newPod)
 		if err != nil {
 			log.Error(err, "Failed to create new Pod", "Pod.Namespace", newPod.Namespace, "Pod.Name", newPod.Name)
 			return ctrl.Result{}, err
 		}
+
 		return ctrl.Result{Requeue: true}, nil
 	} else if err != nil {
 		log.Error(err, "Failed to get Pod")
@@ -63,12 +69,11 @@ func (r *NeovimReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 }
 
 // constructPodForNeovim creates a pod for a Neovim resource
-func constructPodForNeovim(neovim *instancev1alpha1.Neovim) *corev1.Pod {
+func constructPodForNeovim(neovim *instancev1alpha1.Neovim, scheme *runtime.Scheme) (*corev1.Pod, error) {
 	labels := map[string]string{
 		"app": neovim.Name,
 	}
-
-	return &corev1.Pod{
+	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      neovim.Name,
 			Namespace: neovim.Namespace,
@@ -83,6 +88,12 @@ func constructPodForNeovim(neovim *instancev1alpha1.Neovim) *corev1.Pod {
 			},
 		},
 	}
+
+	// Set Neovim instance as the owner and controller
+	if err := controllerutil.SetControllerReference(neovim, pod, scheme); err != nil {
+		return nil, err
+	}
+	return pod, nil
 }
 
 func (r *NeovimReconciler) SetupWithManager(mgr ctrl.Manager) error {
