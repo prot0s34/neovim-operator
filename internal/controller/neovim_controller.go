@@ -24,28 +24,26 @@ type NeovimReconciler struct {
 //+kubebuilder:rbac:groups=instance.neovim.prot0s.com,resources=neovims,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=instance.neovim.prot0s.com,resources=neovims/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=instance.neovim.prot0s.com,resources=neovims/finalizers,verbs=update
+//+kubebuilder:rbac:groups="",resources=pods,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups="",resources=pods/log,verbs=get;list
+//+kubebuilder:rbac:groups="",resources=pods/exec,verbs=create;get;list
 
 func (r *NeovimReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := log.FromContext(ctx)
 
-	// Fetch the Neovim instance
 	neovim := &instancev1alpha1.Neovim{}
 	err := r.Get(ctx, req.NamespacedName, neovim)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			// Neovim resource not found. Ignoring since object must be deleted
 			return ctrl.Result{}, nil
 		}
-		// Error reading the object - requeue the request
 		log.Error(err, "Failed to get Neovim Instance Object")
 		return ctrl.Result{}, err
 	}
 
-	// Check if a Pod already exists for this Neovim instance
 	pod := &corev1.Pod{}
 	err = r.Get(ctx, types.NamespacedName{Name: neovim.Name, Namespace: neovim.Namespace}, pod)
 	if err != nil && errors.IsNotFound(err) {
-		// Define a new Pod for the Neovim instance
 		newPod := constructPodForNeovim(neovim)
 		log.Info("Creating a new Pod", "Pod.Namespace", newPod.Namespace, "Pod.Name", newPod.Name)
 		err = r.Create(ctx, newPod)
@@ -53,7 +51,6 @@ func (r *NeovimReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctr
 			log.Error(err, "Failed to create new Pod", "Pod.Namespace", newPod.Namespace, "Pod.Name", newPod.Name)
 			return ctrl.Result{}, err
 		}
-		// Pod created successfully - return and requeue
 		return ctrl.Result{Requeue: true}, nil
 	} else if err != nil {
 		log.Error(err, "Failed to get Pod")
@@ -81,7 +78,7 @@ func constructPodForNeovim(neovim *instancev1alpha1.Neovim) *corev1.Pod {
 			Containers: []corev1.Container{
 				{
 					Name:  "neovim",
-					Image: "mashmb/nvim:dev", // Use the appropriate image for Neovim
+					Image: "mashmb/nvim:dev",
 				},
 			},
 		},

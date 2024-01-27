@@ -4,5 +4,5 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
 - name: controller
-  newName: docker.io/prot0s/neovim-operator
-  newTag: v0.0.4
+  newName: docker.io/prot0s/neovim-operator-controller
+  newTag: v0.0.5
