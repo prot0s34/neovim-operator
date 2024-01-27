@@ -89,7 +89,6 @@ func constructPodForNeovim(neovim *instancev1alpha1.Neovim, scheme *runtime.Sche
 		},
 	}
 
-	// Set Neovim instance as the owner and controller
 	if err := controllerutil.SetControllerReference(neovim, pod, scheme); err != nil {
 		return nil, err
 	}
@@ -99,5 +98,6 @@ func constructPodForNeovim(neovim *instancev1alpha1.Neovim, scheme *runtime.Sche
 func (r *NeovimReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&instancev1alpha1.Neovim{}).
+		Owns(&corev1.Pod{}).
 		Complete(r)
 }
