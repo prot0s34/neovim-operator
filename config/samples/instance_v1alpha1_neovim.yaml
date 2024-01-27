@@ -1,0 +1,13 @@
+apiVersion: instance.neovim.prot0s.com/v1alpha1
+kind: Neovim
+metadata:
+  labels:
+    app.kubernetes.io/name: neovim
+    app.kubernetes.io/instance: neovim-sample
+    app.kubernetes.io/part-of: neovim-operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: neovim-operator
+  name: neovim-sample
+spec:
+  username: "user-one"
+  version: "python"

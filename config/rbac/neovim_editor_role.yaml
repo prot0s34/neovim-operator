@@ -1,0 +1,31 @@
+# permissions for end users to edit neovims.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: neovim-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: neovim-operator
+    app.kubernetes.io/part-of: neovim-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: neovim-editor-role
+rules:
+- apiGroups:
+  - instance.neovim.prot0s.com
+  resources:
+  - neovims
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - instance.neovim.prot0s.com
+  resources:
+  - neovims/status
+  verbs:
+  - get
