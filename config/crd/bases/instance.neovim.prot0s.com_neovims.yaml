@@ -34,6 +34,9 @@ spec:
           spec:
             description: NeovimSpec defines the desired state of Neovim
             properties:
+              image:
+                description: Version is the version of Neovim to be deployed.
+                type: string
               username:
                 description: Username is the name of the user for whom this Neovim
                   instance is created.

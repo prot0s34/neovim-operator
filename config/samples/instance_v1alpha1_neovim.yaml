@@ -9,5 +9,6 @@ metadata:
     app.kubernetes.io/created-by: neovim-operator
   name: neovim-sample
 spec:
-  username: "user-one"
+  username: "user-two"
   version: "python"
+  image: "mashmb/nvim-python3:dev"

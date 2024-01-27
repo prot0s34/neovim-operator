@@ -82,8 +82,8 @@ func constructPodForNeovim(neovim *instancev1alpha1.Neovim, scheme *runtime.Sche
 		Spec: corev1.PodSpec{
 			Containers: []corev1.Container{
 				{
-					Name:  "neovim",
-					Image: "mashmb/nvim:dev",
+					Name:  neovim.Name,
+					Image: neovim.Spec.Image,
 				},
 			},
 		},

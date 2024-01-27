@@ -30,6 +30,9 @@ type NeovimSpec struct {
 
 	// Version is the version of Neovim to be deployed.
 	Version string `json:"version,omitempty"`
+
+	// Version is the version of Neovim to be deployed.
+	Image string `json:"image,omitempty"`
 }
 
 // NeovimStatus defines the observed state of Neovim
