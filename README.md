@@ -1,8 +1,13 @@
 # neovim-operator
-// TODO(user): Add simple overview of use/purpose
+Did you ever dream about provisioning your favorite neovim setups as kubernetes dev containers, per User/PL/Project?
+Here are operator that will make your dream true... 
+(btw, only if any of your dev's using nvim. Or you'll be alone in your fancy k8s nvim bubble)
 
 ## Description
-// TODO(user): An in-depth paragraph about your project and overview of use
+WIP WIP WIP
+Dont even think to use this at production.
+It's just my funny way to learn how custom k8s controllers works under the hood.
+However, maybe one day it became more usable =)
 
 ## Getting Started
 You’ll need a Kubernetes cluster to run against. You can use [KIND](https://sigs.k8s.io/kind) to get a local cluster for testing, or run against a remote cluster.
@@ -42,7 +47,7 @@ make undeploy
 ```
 
 ## Contributing
-// TODO(user): Add detailed information on how you would like others to contribute to this project
+Just let me know if you want waste your time, by DM/Issue/PR
 
 ### How it works
 This project aims to follow the Kubernetes [Operator pattern](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/).
