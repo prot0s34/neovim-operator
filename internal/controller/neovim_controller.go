@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-
 	instancev1alpha1 "github.com/prot0s34/neovim-operator/api/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
